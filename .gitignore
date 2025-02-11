@@ -1,0 +1,4 @@
+*.log
+venv/*
+deepseek.py
+logger-seek.py
