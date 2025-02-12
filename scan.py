@@ -13,7 +13,8 @@ def raw_key_to_sha256(key):
     sha256_hash = hashlib.sha256(key_bytes).digest()
 
     # Encode the hash in Base64
-    base64_encoded_hash = base64.b64encode(sha256_hash).decode('utf-8').rstrip('=')
+    base64_encoded_hash = base64.b64encode(
+        sha256_hash).decode('utf-8').rstrip('=')
 
     # Format the output as SHA256:<base64_encoded_hash>
     formatted_output = f"SHA256:{base64_encoded_hash}"
@@ -34,7 +35,8 @@ def setup_logger(log_file='app.log', log_level=logging.INFO):
     logger.setLevel(log_level)
 
     # Create a formatter
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     # Create a file handler and set the formatter
     file_handler = logging.FileHandler(log_file)
@@ -51,13 +53,15 @@ def setup_logger(log_file='app.log', log_level=logging.INFO):
     return logger
 
 def main():
-    
+
     logger = setup_logger(log_level=logging.DEBUG)
 
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("-H", "--host", help="The host to connect to.", required=True)
-    parser.add_argument("-P", "--port", help="The port to connect to.", type=int, required=True)
+    parser.add_argument(
+        "-H", "--host", help="The host to connect to.", required=True)
+    parser.add_argument(
+        "-P", "--port", help="The port to connect to.", type=int, required=True)
     args = parser.parse_args()
 
     ssh = paramiko.Transport((args.host, args.port))
