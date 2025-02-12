@@ -1,3 +1,4 @@
+import requests
 import paramiko
 import base64
 import hashlib
@@ -52,6 +53,25 @@ def setup_logger(log_file='app.log', log_level=logging.INFO):
 
     return logger
 
+
+def fetch_webpage(url):
+    try:
+        response = requests.get(url, timeout=1)
+        response.raise_for_status()  # Raise an error for bad responses
+
+        # Get the web server version if available
+        server_version = response.headers.get('Server', 'Not available')
+
+        # Return the formatted string
+        return f"Webserver: {server_version} response: {response.text}"
+
+    except requests.RequestException as e:
+        return f"Error fetching the webpage: {e}"
+
+# Example usage:
+# result = fetch_webpage('http://example.com')
+
+
 def main():
 
     logger = setup_logger(log_level=logging.DEBUG)
@@ -63,14 +83,15 @@ def main():
     parser.add_argument(
         "-P", "--port", help="The port to connect to.", type=int, required=True)
     args = parser.parse_args()
+    url = f"http://{args.host}/"
 
     ssh = paramiko.Transport((args.host, args.port))
     ssh.start_client()
     key = ssh.get_remote_server_key()
     ssh.close()
-    logger.debug(f"SSH Connection Made to: {args.host}:{str(args.port)} {key.get_name()} -> {raw_key_to_sha256(key)} SSH Version: {ssh.remote_version}")
-    
-
+    logger.debug(
+        f"SSH: {args.host}:{str(args.port)} {key.get_name()} -> {raw_key_to_sha256(key)} SSH Version: {ssh.remote_version}")
+    logger.debug(f"HTTP GET:{url} {fetch_webpage(url)}")
 
 
 if __name__ == '__main__':
